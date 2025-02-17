@@ -9,15 +9,14 @@ dotenv.config(); // Ensure this line is present and at the top
 
 const app = express();
 app.use(express.json());  // This will parse JSON request bodies
-
-(async () => {
-    await connect();
-})();
-
 app.use(cors({
     origin: process.env.CLIENT_URL || 'http://localhost:5173',
     credentials: true
 }));
+(async () => {
+    await connect();
+})();
+
 
 app.use('/api/auth', PublicRoutes);
 

@@ -1,14 +1,12 @@
 import jwt from 'jsonwebtoken';
 
-// Function to generate JWT token
 export const generateToken = (payload) => {
-    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+    return jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRES_IN });
 };
 
-// Function to verify JWT token
 export const verifyToken = (token) => {
     try {
-        return jwt.verify(token, process.env.JWT_SECRET);
+        return jwt.verify(token, process.env.JWT_SECRET_KEY);
     } catch (err) {
         throw new Error('Invalid or expired token');
     }

@@ -42,12 +42,10 @@ export const registerUser = async (req, res) => {
     } catch (error) {
         console.error('Registration Error:', error);
 
-        // Handle Zod validation errors
         if (error.errors) {
             return apiResponse.error(res, error.errors[0].message, 400);
         }
 
-        // Handle Snowflake errors
         if (error.message.includes('Duplicate entry')) {
             return apiResponse.error(res, 'Email already registered', 409);
         }
@@ -56,49 +54,3 @@ export const registerUser = async (req, res) => {
     }
 };
 
-// Login functionality remains the same...
-export const loginUser = async (req, res) => {
-    try {
-        const parsedData = LoginSchema.parse(req.body);
-        const { email, password } = parsedData;
-
-        // Check if user exists
-        const user = await executeQuery(
-            'SELECT * FROM Users WHERE email = ?',
-            [email]
-        );
-
-        if (user.length === 0) {
-            return apiResponse.error(res, 'Email not found', 404);
-        }
-
-        const storedPasswordHash = user[0].password_hash;
-
-        // Compare password with stored hash
-        const isPasswordValid = await bcrypt.compare(password, storedPasswordHash);
-
-        if (!isPasswordValid) {
-            return apiResponse.error(res, 'Invalid password', 401);
-        }
-
-        const { user_id, role } = user[0];
-
-        // Generate JWT token
-        const token = jwt.sign(
-            { user_id, email, role },
-            process.env.JWT_SECRET_KEY,
-            { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
-        );
-
-        return apiResponse.success(res, { token }, 'User logged in successfully', 200);
-    } catch (error) {
-        console.error('Login Error:', error);
-
-        // Handle Zod validation errors
-        if (error.errors) {
-            return apiResponse.error(res, error.errors[0].message, 400);
-        }
-
-        return apiResponse.error(res, error.message || 'Login failed', 500);
-    }
-};
