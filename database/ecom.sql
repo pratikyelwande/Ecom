@@ -1,12 +1,11 @@
 create database ecom;
 use  database ecom;
--- ❄️ Drop Tables (if they exist) in reverse order
 DROP TABLE IF EXISTS Reviews;
 DROP TABLE IF EXISTS Seller_Orders;
 DROP TABLE IF EXISTS Order_Items;
 DROP TABLE IF EXISTS Orders;
 DROP TABLE IF EXISTS Cart;
-DROP TABLE IF EXISTS Products;ECOM.PUBLIC.ROLES
+DROP TABLE IF EXISTS Products;
 DROP TABLE IF EXISTS Categories;
 DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS Roles;
@@ -52,10 +51,10 @@ INSERT INTO Categories (category_id, name) VALUES
                                                ('cat_001', 'Electronics'),
                                                ('cat_002', 'Books');
 
--- ❄️ Create Products Table
+-- ❄️ Create Products Table (MODIFIED)
 CREATE TABLE Products (
                           product_id STRING DEFAULT uuid_string() PRIMARY KEY,
-                          seller_id STRING REFERENCES Users(user_id),
+                          user_id STRING REFERENCES Users(user_id),  -- Changed from seller_id
                           name STRING NOT NULL,
                           description STRING,
                           price FLOAT NOT NULL,
@@ -65,11 +64,10 @@ CREATE TABLE Products (
                           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ✅ Insert Demo Products
-INSERT INTO Products (product_id, seller_id, name, description, price, quantity, category_id) VALUES
-                                                                                                  ('prod_100', 'seller_456', 'Wireless Headphones', 'Noise-cancelling Bluetooth headphones', 199.99, 50, 'cat_001'),
-                                                                                                  ('prod_200', 'seller_456', 'Programming Guide', 'Learn SQL and Database Design', 49.99, 100, 'cat_002');
-
+-- ✅ Insert Demo Products (UPDATED)
+INSERT INTO Products (product_id, user_id, name, description, price, quantity, category_id) VALUES
+                                                                                                ('prod_100', 'seller_456', 'Wireless Headphones', 'Noise-cancelling Bluetooth headphones', 199.99, 50, 'cat_001'),
+                                                                                                ('prod_200', 'seller_456', 'Programming Guide', 'Learn SQL and Database Design', 49.99, 100, 'cat_002');
 -- ❄️ Create Cart Table
 CREATE TABLE Cart (
                       cart_id STRING DEFAULT uuid_string() PRIMARY KEY,
